@@ -20,7 +20,7 @@ vector<vector<int> > dp;
 
 int INF = -1000;
 
-int main() {
+int backpack_cost_slice() {
     cin >> s >> n;
 
     w.assign(n + 1, 0);

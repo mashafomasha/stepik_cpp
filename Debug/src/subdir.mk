@@ -4,6 +4,8 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../src/backpack_cost_slisable.cpp \
+../src/backpack_response.cpp \
 ../src/backpack_slicable_stone.cpp \
 ../src/bad_from_string.cpp \
 ../src/battle.cpp \
@@ -31,6 +33,8 @@ CPP_SRCS += \
 ../src/tortilla_response.cpp 
 
 OBJS += \
+./src/backpack_cost_slisable.o \
+./src/backpack_response.o \
 ./src/backpack_slicable_stone.o \
 ./src/bad_from_string.o \
 ./src/battle.o \
@@ -58,6 +62,8 @@ OBJS += \
 ./src/tortilla_response.o 
 
 CPP_DEPS += \
+./src/backpack_cost_slisable.d \
+./src/backpack_response.d \
 ./src/backpack_slicable_stone.d \
 ./src/bad_from_string.d \
 ./src/battle.d \
