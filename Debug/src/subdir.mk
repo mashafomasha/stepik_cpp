@@ -11,6 +11,7 @@ CPP_SRCS += \
 ../src/bad_from_string.cpp \
 ../src/battle.cpp \
 ../src/calculator_response.cpp \
+../src/cup_task.cpp \
 ../src/graph_adjacency_list_to_matrix.cpp \
 ../src/graph_check_tree_subgraph.cpp \
 ../src/graph_connectivity_components.cpp \
@@ -57,6 +58,7 @@ OBJS += \
 ./src/bad_from_string.o \
 ./src/battle.o \
 ./src/calculator_response.o \
+./src/cup_task.o \
 ./src/graph_adjacency_list_to_matrix.o \
 ./src/graph_check_tree_subgraph.o \
 ./src/graph_connectivity_components.o \
@@ -103,6 +105,7 @@ CPP_DEPS += \
 ./src/bad_from_string.d \
 ./src/battle.d \
 ./src/calculator_response.d \
+./src/cup_task.d \
 ./src/graph_adjacency_list_to_matrix.d \
 ./src/graph_check_tree_subgraph.d \
 ./src/graph_connectivity_components.d \

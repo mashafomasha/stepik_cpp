@@ -1,61 +1,74 @@
 #include <iostream>
-#include <vector>
+#include <set>
 #include <queue>
-#include <algorithm>
+#include <map>
 
 using namespace std;
 
-int n, m, s;
-vector<vector<int> > graph;
-queue<int> q;
-vector<int> dist;
+int m, n, p, q;
+int x_1, y_1, x_2, y_2;
+queue<pair<int, int> > qu;
+set<pair<int, int> > visited;
+map<pair<int, int>, int > dist;
+
+bool step(int x, int y, int d) {
+	if (visited.find({ x, y }) != visited.end()) {
+		return 0;
+	}
+	if (x <= 0 || y <= 0 || x > m || y > n) {
+		return 0;
+	}
+
+	visited.insert({ x, y });
+	qu.push({ x, y });
+	dist.insert({ { x, y }, d });
+
+	return 1;
+}
 
 int main() {
-	cin >> n >> m;
+	cin >> m >> n >> p >> q >> x_1 >> y_1 >> x_2 >> y_2;
 
-	dist.resize(n, -1);
-	graph.resize(n, vector<int>());
+	qu.push({ x_1, y_1 });
+	dist.insert({ { x_1, y_1 }, 0 });
 
-	for (int i = 0; i < m; ++i) {
-		int u, v;
-		cin >> u >> v;
+	while(!qu.empty()) {
+		auto v = qu.front();
+		qu.pop();
 
-		u -= 1;
-		v -= 1;
+		int x = v.first;
+		int y = v.second;
+		int d = dist[{ x, y }] + 1;
 
-		graph[u].push_back(v);
-		graph[v].push_back(u);
-	}
+		visited.insert({ x, y });
 
-	s = 0;
-
-	for (int i = 0; i < n; ++i) {
-		int start = i;
-
-		dist.assign(n, -1);
-		q.push(start);
-
-		dist[start] = 0;
-
-		while (!q.empty()) {
-			int c = q.front();
-			q.pop();
-
-			if (c > start) {
-				s += dist[c];
-
-			}
-
-			for (auto ch: graph[c]) {
-				if (dist[ch] == -1) {
-					dist[ch] = dist[c] + 1;
-					q.push(ch);
-				}
-			}
+		if (x == x_2 && y == y_2) {
+			cout << d - 1;
+			return 0;
 		}
+
+		// p q
+		// to top left
+		step(x - q, y - p, d);
+		// to top right
+		step(x - q, y + p, d);
+		// to bottom left
+		step(x + q, y - p, d);
+		// to bottom right
+		step(x + q, y + p, d);
+
+		// q p
+		// to top left
+		step(x - p, y - q, d);
+		// to top right
+		step(x - p, y + q, d);
+		// to bottom left
+		step(x + p, y - q, d);
+		// to bottom right
+		step(x + p, y + q, d);
 	}
 
-	cout << s;
+	cout << -1;
 
     return 0;
 }
