@@ -21,6 +21,7 @@ CPP_SRCS += \
 ../src/graph_matrix_to_adjacency_list.cpp \
 ../src/graph_maxtirx_to_verticies_list.cpp \
 ../src/graph_oriented_cycle_check_with_answer.cpp \
+../src/graph_pq_horse.cpp \
 ../src/graph_reverse_graph_edges.cpp \
 ../src/graph_topological_sort.cpp \
 ../src/graph_topological_sort_check.cpp \
@@ -68,6 +69,7 @@ OBJS += \
 ./src/graph_matrix_to_adjacency_list.o \
 ./src/graph_maxtirx_to_verticies_list.o \
 ./src/graph_oriented_cycle_check_with_answer.o \
+./src/graph_pq_horse.o \
 ./src/graph_reverse_graph_edges.o \
 ./src/graph_topological_sort.o \
 ./src/graph_topological_sort_check.o \
@@ -115,6 +117,7 @@ CPP_DEPS += \
 ./src/graph_matrix_to_adjacency_list.d \
 ./src/graph_maxtirx_to_verticies_list.d \
 ./src/graph_oriented_cycle_check_with_answer.d \
+./src/graph_pq_horse.d \
 ./src/graph_reverse_graph_edges.d \
 ./src/graph_topological_sort.d \
 ./src/graph_topological_sort_check.d \

@@ -2,73 +2,125 @@
 #include <set>
 #include <queue>
 #include <map>
+#include <vector>
+#include <string>
 
 using namespace std;
 
-int m, n, p, q;
-int x_1, y_1, x_2, y_2;
-queue<pair<int, int> > qu;
+int m, n;
+pair<int, int> s;
+vector<pair<int, int> > d;
+vector<vector<int> > w;
+queue<pair<int, int> > q;
 set<pair<int, int> > visited;
-map<pair<int, int>, int > dist;
-
-bool step(int x, int y, int d) {
-	if (visited.find({ x, y }) != visited.end()) {
-		return 0;
-	}
-	if (x <= 0 || y <= 0 || x > m || y > n) {
-		return 0;
-	}
-
-	visited.insert({ x, y });
-	qu.push({ x, y });
-	dist.insert({ { x, y }, d });
-
-	return 1;
-}
+vector<vector<char> > mp;
 
 int main() {
-	cin >> m >> n >> p >> q >> x_1 >> y_1 >> x_2 >> y_2;
+	cin >> n >> m;
 
-	qu.push({ x_1, y_1 });
-	dist.insert({ { x_1, y_1 }, 0 });
+	string tmp;
+	getline(cin, tmp);
 
-	while(!qu.empty()) {
-		auto v = qu.front();
-		qu.pop();
+	w.assign(2 * n + 1, vector<int>(2 * m + 1, 0));
+	mp.assign(2 * n + 1, vector<char>(2 * m + 1));
 
-		int x = v.first;
-		int y = v.second;
-		int d = dist[{ x, y }] + 1;
+	for (int i = 0; i < 2 * n + 1; ++i) {
+		string str;
+		getline(cin, str);
 
-		visited.insert({ x, y });
+		for (int j = 0; j < str.size(); ++j) {
+			char ch = str[j];
 
-		if (x == x_2 && y == y_2) {
-			cout << d - 1;
-			return 0;
+			if (ch == 'S') {
+				s = {i, j};
+			}
+			if (ch == 'D') {
+				d.push_back({ i, j });
+			}
+			if (ch == '-' || ch == '|') {
+				w[i][j] = 1;
+			}
+
+			mp[i][j] = ch;
 		}
-
-		// p q
-		// to top left
-		step(x - q, y - p, d);
-		// to top right
-		step(x - q, y + p, d);
-		// to bottom left
-		step(x + q, y - p, d);
-		// to bottom right
-		step(x + q, y + p, d);
-
-		// q p
-		// to top left
-		step(x - p, y - q, d);
-		// to top right
-		step(x - p, y + q, d);
-		// to bottom left
-		step(x + p, y - q, d);
-		// to bottom right
-		step(x + p, y + q, d);
 	}
 
-	cout << -1;
+	for (auto c: d) {
+		while(!q.empty()) {
+			q.pop();
+		}
+		visited.clear();
+
+		q.push(c);
+		int in_the_stock = 0;
+
+		while (!q.empty()) {
+			auto curr = q.front();
+			q.pop();
+
+			visited.insert(curr);
+
+			int curr_i = curr.first;
+			int curr_j = curr.second;
+
+			if (curr_i == s.first && curr_j == s.second) {
+				in_the_stock = 1;
+				break;
+			}
+
+			// to left
+			for (int j = curr_j; j > 0; --j) {
+				if (w[curr_i][j - 1] == 1) {
+					if (visited.find({ curr_i, j }) == visited.end()) {
+						q.push({ curr_i, j });
+						visited.insert({ curr_i, j });
+					}
+					break;
+				}
+			}
+			// to right
+			for (int j = curr_j; j < 2 * m; ++j) {
+				if (w[curr_i][j + 1] == 1) {
+					if (visited.find({ curr_i, j }) == visited.end()) {
+						q.push({ curr_i, j });
+						visited.insert({ curr_i, j });
+					}
+					break;
+				}
+			}
+			// to top
+			for (int i = curr_i; i > 0; --i) {
+				if (w[i - 1][curr_j] == 1) {
+					if (visited.find({ i, curr_j }) == visited.end()) {
+						q.push({ i, curr_j });
+						visited.insert({ i, curr_j });
+					}
+					break;
+				}
+			}
+			// to bottom
+			for (int i = curr_i; i < 2 * n; ++i) {
+				if (w[i + 1][curr_j] == 1) {
+					if (visited.find({ i, curr_j }) == visited.end()) {
+						q.push({ i, curr_j });
+						visited.insert({ i, curr_j });
+					}
+					break;
+				}
+			}
+		}
+
+		if (!in_the_stock) {
+			mp[c.first][c.second] = ' ';
+		}
+	}
+
+	for (auto r: mp) {
+		for (auto c: r) {
+			cout << c;
+		}
+		cout << endl;
+	}
 
     return 0;
 }
