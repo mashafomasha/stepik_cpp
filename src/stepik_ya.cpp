@@ -8,12 +8,12 @@
 using namespace std;
 
 int m, n;
-pair<int, int> s;
-vector<pair<int, int> > d;
-vector<vector<int> > w;
+
 queue<pair<int, int> > q;
-set<pair<int, int> > visited;
+
+vector<vector<int> > visited;
 vector<vector<char> > mp;
+vector<vector<char> > res;
 
 int main() {
 	cin >> n >> m;
@@ -21,8 +21,9 @@ int main() {
 	string tmp;
 	getline(cin, tmp);
 
-	w.assign(2 * n + 1, vector<int>(2 * m + 1, 0));
 	mp.assign(2 * n + 1, vector<char>(2 * m + 1));
+	res.assign(2 * n + 1, vector<char>(2 * m + 1));
+	visited.assign(2 * n + 1, vector<int>(2 * m + 1, 0));
 
 	for (int i = 0; i < 2 * n + 1; ++i) {
 		string str;
@@ -30,92 +31,125 @@ int main() {
 
 		for (int j = 0; j < str.size(); ++j) {
 			char ch = str[j];
+			mp[i][j] = ch;
+			res[i][j] = ch;
 
 			if (ch == 'S') {
-				s = {i, j};
+				q.push({i, j});
 			}
 			if (ch == 'D') {
-				d.push_back({ i, j });
+				res[i][j] = ' ';
 			}
-			if (ch == '-' || ch == '|') {
-				w[i][j] = 1;
-			}
-
-			mp[i][j] = ch;
 		}
 	}
 
-	for (auto c: d) {
-		while(!q.empty()) {
-			q.pop();
-		}
-		visited.clear();
+	while (!q.empty()) {
+		auto curr = q.front();
+		q.pop();
 
-		q.push(c);
-		int in_the_stock = 0;
+		int curr_i = curr.first;
+		int curr_j = curr.second;
 
-		while (!q.empty()) {
-			auto curr = q.front();
-			q.pop();
+		visited[curr_i][curr_j] = 1;
 
-			visited.insert(curr);
-
-			int curr_i = curr.first;
-			int curr_j = curr.second;
-
-			if (curr_i == s.first && curr_j == s.second) {
-				in_the_stock = 1;
-				break;
-			}
-
-			// to left
-			for (int j = curr_j; j > 0; --j) {
-				if (w[curr_i][j - 1] == 1) {
-					if (visited.find({ curr_i, j }) == visited.end()) {
-						q.push({ curr_i, j });
-						visited.insert({ curr_i, j });
-					}
-					break;
+		// BOTTOM WALL => CAN GO TO TOP
+		if (mp[curr_i + 1][curr_j] == '-') {
+			// GO TOP
+			for (int i = curr_i; i > 0; i -= 2) {
+				if (mp[i][curr_j] == 'D') {
+					res[i][curr_j] = 'D';
 				}
-			}
-			// to right
-			for (int j = curr_j; j < 2 * m; ++j) {
-				if (w[curr_i][j + 1] == 1) {
-					if (visited.find({ curr_i, j }) == visited.end()) {
-						q.push({ curr_i, j });
-						visited.insert({ curr_i, j });
-					}
-					break;
-				}
-			}
-			// to top
-			for (int i = curr_i; i > 0; --i) {
-				if (w[i - 1][curr_j] == 1) {
-					if (visited.find({ i, curr_j }) == visited.end()) {
+				if (
+					mp[i][curr_j - 1] == '|'
+					|| mp[i][curr_j + 1] == '|'
+					|| mp[i - 1][curr_j] == '-'
+					|| mp[i + 1][curr_j] == '-'
+				) {
+					if (visited[i][curr_j] == 0) {
 						q.push({ i, curr_j });
-						visited.insert({ i, curr_j });
+						visited[i][curr_j] = 1;
 					}
-					break;
 				}
-			}
-			// to bottom
-			for (int i = curr_i; i < 2 * n; ++i) {
-				if (w[i + 1][curr_j] == 1) {
-					if (visited.find({ i, curr_j }) == visited.end()) {
-						q.push({ i, curr_j });
-						visited.insert({ i, curr_j });
-					}
+				if (mp[i - 1][curr_j] == '-') {
 					break;
 				}
 			}
 		}
 
-		if (!in_the_stock) {
-			mp[c.first][c.second] = ' ';
+		// TOP WALL => CAN GO TO BOTTOM
+		if (mp[curr_i - 1][curr_j] == '-') {
+			// GO BOTTOM
+			for (int i = curr_i; i < 2 * n + 1; i += 2) {
+				if (mp[i][curr_j] == 'D') {
+					res[i][curr_j] = 'D';
+				}
+				if (
+					mp[i][curr_j - 1] == '|'
+					|| mp[i][curr_j + 1] == '|'
+					|| mp[i - 1][curr_j] == '-'
+					|| mp[i + 1][curr_j] == '-'
+				) {
+					if (visited[i][curr_j] == 0) {
+						q.push({ i, curr_j });
+						visited[i][curr_j] = 1;
+					}
+				}
+				if (mp[i + 1][curr_j] == '-') {
+					break;
+				}
+			}
+		}
+
+		// RIGHT WALL => CAN GO TO LEFT
+		if (mp[curr_i][curr_j + 1] == '|') {
+			// GO LEFT
+			for (int j = curr_j; j > 0; j -= 2) {
+				if (mp[curr_i][j] == 'D') {
+					res[curr_i][j] = 'D';
+				}
+				if (
+					mp[curr_i][j - 1] == '|'
+					|| mp[curr_i][j + 1] == '|'
+					|| mp[curr_i - 1][j] == '-'
+					|| mp[curr_i + 1][j] == '-'
+				) {
+					if (visited[curr_i][j] == 0) {
+						q.push({ curr_i, j });
+						visited[curr_i][j] = 1;
+					}
+				}
+				if (mp[curr_i][j - 1] == '|') {
+					break;
+				}
+			}
+		}
+
+		// LEFT WALL => CAN GO TO RIGHT
+		if (mp[curr_i][curr_j - 1] == '|') {
+			// GO RIGHT
+			for (int j = curr_j; j < 2 * m + 1; j += 2) {
+				if (mp[curr_i][j] == 'D') {
+					res[curr_i][j] = 'D';
+				}
+				if (
+					mp[curr_i][j - 1] == '|'
+					|| mp[curr_i][j + 1] == '|'
+					|| mp[curr_i - 1][j] == '-'
+					|| mp[curr_i + 1][j] == '-'
+				) {
+					if (visited[curr_i][j] == 0) {
+						q.push({ curr_i, j });
+						visited[curr_i][j] = 1;
+					}
+				}
+				if (mp[curr_i][j + 1] == '|') {
+					break;
+				}
+			}
 		}
 	}
 
-	for (auto r: mp) {
+	for (auto r: res) {
 		for (auto c: r) {
 			cout << c;
 		}
